@@ -1,0 +1,1201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sonam Tenzin - Medical Sales & Healthcare</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=JetBrains+Mono:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-light: #f8f9fa;
+            --bg-lighter: #ffffff;
+            --bg-card: rgba(255, 255, 255, 0.9);
+            --accent-blue: #0066ff;
+            --accent-purple: #7c3aed;
+            --accent-pink: #ec4899;
+            --text-primary: #1a1a1a;
+            --text-secondary: #4a5568;
+            --text-muted: #718096;
+            --border-color: rgba(0, 0, 0, 0.08);
+            --shadow-light: rgba(0, 0, 0, 0.05);
+            --gradient-1: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --gradient-2: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+
+        body {
+            font-family: 'JetBrains Mono', monospace;
+            background: var(--bg-light);
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* 3D Canvas Background */
+        #particle-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            background: radial-gradient(ellipse at top, rgba(102, 126, 234, 0.08) 0%, transparent 50%),
+                        radial-gradient(ellipse at bottom, rgba(236, 72, 153, 0.06) 0%, transparent 50%);
+        }
+
+        /* Animated wave overlay */
+        .wave-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            overflow: hidden;
+            pointer-events: none;
+        }
+
+        .wave {
+            position: absolute;
+            width: 200%;
+            height: 100%;
+            background: linear-gradient(180deg, 
+                transparent 0%, 
+                rgba(102, 126, 234, 0.03) 20%,
+                rgba(102, 126, 234, 0.05) 40%,
+                rgba(236, 72, 153, 0.03) 60%,
+                transparent 80%);
+            animation: wave-flow 20s ease-in-out infinite;
+            transform-origin: center;
+        }
+
+        .wave:nth-child(2) {
+            animation-delay: -5s;
+            animation-duration: 25s;
+            opacity: 0.5;
+        }
+
+        .wave:nth-child(3) {
+            animation-delay: -10s;
+            animation-duration: 30s;
+            opacity: 0.3;
+        }
+
+        @keyframes wave-flow {
+            0%, 100% {
+                transform: translateX(-25%) translateY(0) rotate(0deg) scale(1);
+            }
+            25% {
+                transform: translateX(-15%) translateY(-5%) rotate(1deg) scale(1.05);
+            }
+            50% {
+                transform: translateX(-10%) translateY(0) rotate(-1deg) scale(1);
+            }
+            75% {
+                transform: translateX(-20%) translateY(5%) rotate(0.5deg) scale(0.95);
+            }
+        }
+
+        /* Animated grid background */
+        .grid-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(rgba(0, 0, 0, 0.02) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 0, 0, 0.02) 1px, transparent 1px);
+            background-size: 50px 50px;
+            z-index: 1;
+            animation: gridMove 20s linear infinite;
+            pointer-events: none;
+        }
+
+        @keyframes gridMove {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(50px, 50px); }
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            position: relative;
+            z-index: 2;
+        }
+
+        /* Header/Hero Section */
+        header {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            width: 100%;
+            margin-left: -2rem;
+            margin-right: -2rem;
+            padding-left: 2rem;
+            padding-right: 2rem;
+            background: linear-gradient(180deg, 
+                rgba(248, 249, 250, 0) 0%,
+                rgba(255, 255, 255, 0) 50%,
+                rgba(248, 249, 250, 0) 100%);
+            overflow: hidden;
+        }
+
+        header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle at 30% 50%, rgba(102, 126, 234, 0.08) 0%, transparent 50%),
+                        radial-gradient(circle at 70% 50%, rgba(236, 72, 153, 0.06) 0%, transparent 50%);
+            animation: float 15s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translate(0, 0) rotate(0deg);
+            }
+            33% {
+                transform: translate(10%, 10%) rotate(5deg);
+            }
+            66% {
+                transform: translate(-10%, 5%) rotate(-5deg);
+            }
+        }
+
+        .hero-content {
+            text-align: left;
+            max-width: 900px;
+        }
+
+        h1 {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: clamp(3rem, 10vw, 8rem);
+            line-height: 0.9;
+            letter-spacing: 0.05em;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: fadeInUp 1s ease-out, glow 3s ease-in-out infinite alternate;
+        }
+
+        @keyframes glow {
+            from {
+                filter: drop-shadow(0 0 5px rgba(102, 126, 234, 0.3));
+            }
+            to {
+                filter: drop-shadow(0 0 20px rgba(102, 126, 234, 0.5));
+            }
+        }
+
+        .subtitle {
+            font-size: clamp(1rem, 2vw, 1.5rem);
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+            font-weight: 300;
+            animation: fadeInUp 1s ease-out 0.2s both;
+        }
+
+        .highlight {
+            color: var(--accent-blue);
+            font-weight: 600;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            animation: fadeInUp 1s ease-out 0.4s both;
+        }
+
+        .btn {
+            padding: 1rem 2rem;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9rem;
+            font-weight: 600;
+            text-decoration: none;
+            border: 2px solid;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            border-radius: 8px;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(0, 0, 0, 0.05);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .btn:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        .btn-primary {
+            background: var(--accent-blue);
+            color: white;
+            border-color: var(--accent-blue);
+        }
+
+        .btn-primary:hover {
+            background: var(--accent-purple);
+            border-color: var(--accent-purple);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--accent-purple);
+            border-color: var(--accent-purple);
+        }
+
+        .btn-secondary:hover {
+            background: var(--accent-purple);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(124, 58, 237, 0.3);
+        }
+
+        /* Scroll indicator */
+        .scroll-indicator {
+            position: absolute;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            animation: bounce 2s infinite;
+        }
+
+        .scroll-indicator::before {
+            content: '↓';
+            font-size: 2rem;
+            color: var(--accent-blue);
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateX(-50%) translateY(0); }
+            50% { transform: translateX(-50%) translateY(10px); }
+        }
+
+        /* Section styling */
+        section {
+            padding: 6rem 0;
+            position: relative;
+            transition: transform 0.3s ease;
+        }
+
+        .section-title {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            margin-bottom: 3rem;
+            letter-spacing: 0.05em;
+            position: relative;
+            display: inline-block;
+            color: var(--text-primary);
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 0;
+            width: 60%;
+            height: 3px;
+            background: linear-gradient(90deg, var(--accent-blue), transparent);
+            animation: expandLine 2s ease-in-out infinite;
+        }
+
+        @keyframes expandLine {
+            0%, 100% { width: 60%; }
+            50% { width: 80%; }
+        }
+
+        /* About section */
+        .about-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+            align-items: center;
+            background: rgba(255, 255, 255, 0);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 3rem;
+            box-shadow: 0 8px 32px var(--shadow-light);
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .about-content::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(102, 126, 234, 0.05) 0%, transparent 70%);
+            opacity: 0;
+            transition: opacity 0.4s ease;
+            pointer-events: none;
+        }
+
+        .about-content:hover::before {
+            opacity: 1;
+        }
+
+        .about-content:hover {
+            background: rgba(255, 255, 255, 0.85);
+            border-color: rgba(102, 126, 234, 0.3);
+            box-shadow: 0 8px 32px rgba(102, 126, 234, 0.15);
+            transform: translateY(-5px);
+        }
+
+        .about-text p {
+            margin-bottom: 1.5rem;
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+        }
+
+        .about-stats {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 2rem;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            padding: 2rem;
+            border: 1px solid var(--border-color);
+            border-radius: 15px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            transform-style: preserve-3d;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(90deg, var(--accent-blue), var(--accent-purple));
+        }
+
+        .stat-card::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: radial-gradient(circle, rgba(102, 126, 234, 0.1), transparent);
+            transform: translate(-50%, -50%);
+            transition: width 0.5s ease, height 0.5s ease;
+            border-radius: 50%;
+        }
+
+        .stat-card:hover::after {
+            width: 200%;
+            height: 200%;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px) rotateX(5deg);
+            background: rgba(255, 255, 255, 0.95);
+            border-color: var(--accent-blue);
+            box-shadow: 0 10px 40px rgba(102, 126, 234, 0.2);
+        }
+
+        .stat-number {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 3rem;
+            color: var(--accent-blue);
+            line-height: 1;
+        }
+
+        .stat-label {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+        }
+
+        /* Projects section */
+        .projects-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .project-card {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border-color);
+            padding: 2.5rem;
+            border-radius: 15px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s ease;
+            cursor: pointer;
+            transform-style: preserve-3d;
+        }
+
+        .project-card::before {
+            content: '';
+            position: absolute;
+            top: -100%;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(180deg, transparent, rgba(102, 126, 234, 0.05));
+            transition: top 0.4s ease;
+        }
+
+        .project-card:hover::before {
+            top: 0;
+        }
+
+        .project-card:hover {
+            transform: translateY(-10px) rotateX(2deg);
+            background: rgba(255, 255, 255, 0.95);
+            border-color: var(--accent-blue);
+            box-shadow: 0 20px 60px rgba(102, 126, 234, 0.2);
+        }
+
+        .project-title {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            letter-spacing: 0.05em;
+            color: var(--text-primary);
+        }
+
+        .project-description {
+            color: var(--text-secondary);
+            margin-bottom: 1.5rem;
+            line-height: 1.8;
+        }
+
+        .project-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .tag {
+            padding: 0.3rem 0.8rem;
+            background: rgba(102, 126, 234, 0.1);
+            border: 1px solid rgba(102, 126, 234, 0.3);
+            border-radius: 20px;
+            font-size: 0.75rem;
+            color: var(--accent-blue);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            transition: all 0.3s ease;
+        }
+
+        .tag:hover {
+            background: rgba(102, 126, 234, 0.2);
+            transform: scale(1.1);
+        }
+
+        /* Experience section */
+        .timeline {
+            position: relative;
+            padding-left: 3rem;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: linear-gradient(180deg, var(--accent-blue), var(--accent-purple));
+        }
+
+        .timeline-item {
+            position: relative;
+            margin-bottom: 3rem;
+            padding: 2rem;
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border-color);
+            border-radius: 15px;
+            transition: all 0.3s ease;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -3.5rem;
+            top: 2rem;
+            width: 15px;
+            height: 15px;
+            background: var(--accent-blue);
+            border: 3px solid var(--bg-light);
+            border-radius: 50%;
+            box-shadow: 0 0 10px var(--accent-blue);
+        }
+
+        .timeline-item:hover {
+            transform: translateX(10px);
+            background: rgba(255, 255, 255, 0.95);
+            border-color: var(--accent-blue);
+            box-shadow: 0 10px 40px rgba(102, 126, 234, 0.15);
+        }
+
+        .timeline-date {
+            font-size: 0.9rem;
+            color: var(--accent-blue);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 0.5rem;
+        }
+
+        .timeline-title {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 1.8rem;
+            margin-bottom: 0.5rem;
+            letter-spacing: 0.05em;
+            color: var(--text-primary);
+        }
+
+        .timeline-company {
+            color: var(--accent-purple);
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .timeline-description {
+            color: var(--text-secondary);
+            line-height: 1.8;
+        }
+
+        /* Skills section */
+        .skills-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+        }
+
+        .skill-category {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+            padding: 2rem;
+            border: 1px solid var(--border-color);
+            border-radius: 15px;
+            transition: all 0.3s ease;
+            transform-style: preserve-3d;
+        }
+
+        .skill-category:hover {
+            background: rgba(255, 255, 255, 0.95);
+            border-color: var(--accent-blue);
+            transform: translateY(-5px) rotateY(3deg);
+            box-shadow: 0 10px 40px rgba(102, 126, 234, 0.15);
+        }
+
+        .skill-category h3 {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            color: var(--accent-blue);
+            letter-spacing: 0.05em;
+        }
+
+        .skill-list {
+            list-style: none;
+        }
+
+        .skill-list li {
+            padding: 0.5rem 0;
+            color: var(--text-secondary);
+            position: relative;
+            padding-left: 1.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .skill-list li:hover {
+            color: var(--accent-blue);
+            padding-left: 2rem;
+        }
+
+        .skill-list li::before {
+            content: '▹';
+            position: absolute;
+            left: 0;
+            color: var(--accent-blue);
+        }
+
+        /* Contact section */
+        .contact-content {
+            max-width: 800px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .contact-text {
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+            margin-bottom: 3rem;
+            line-height: 1.8;
+        }
+
+        .contact-links {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .contact-link {
+            padding: 1.5rem 2.5rem;
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+            border: 2px solid var(--accent-blue);
+            border-radius: 10px;
+            color: var(--accent-blue);
+            text-decoration: none;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .contact-link::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: var(--accent-blue);
+            transition: left 0.3s ease;
+            z-index: -1;
+        }
+
+        .contact-link:hover::before {
+            left: 0;
+        }
+
+        .contact-link:hover {
+            color: white;
+            transform: translateY(-5px);
+            box-shadow: 0 10px 40px rgba(102, 126, 234, 0.3);
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 3rem 0;
+            border-top: 1px solid var(--border-color);
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .about-content {
+                grid-template-columns: 1fr;
+            }
+
+            .about-stats {
+                grid-template-columns: 1fr;
+            }
+
+            .projects-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .timeline {
+                padding-left: 2rem;
+            }
+
+            .timeline-item::before {
+                left: -2.5rem;
+            }
+
+            .contact-links {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <canvas id="particle-canvas"></canvas>
+    <div class="wave-container">
+        <div class="wave"></div>
+        <div class="wave"></div>
+        <div class="wave"></div>
+    </div>
+    <div class="grid-bg"></div>
+
+    <div class="container">
+        <!-- Hero Section -->
+        <header>
+            <div class="hero-content">
+                <h1>SONAM TENZIN</h1>
+                <p class="subtitle">
+                    <span class="highlight">Medical Sales</span> & <span class="highlight">Healthcare</span> Professional<br>
+                    Aspiring Medical Sales Rep at the intersection of science and strategy
+                </p>
+                <div class="cta-buttons">
+                    <a href="#experience" class="btn btn-primary">View Experience</a>
+                    <a href="#contact" class="btn btn-secondary">Get in Touch</a>
+                </div>
+            </div>
+            <div class="scroll-indicator"></div>
+        </header>
+
+        <!-- About Section -->
+        <section id="about">
+            <h2 class="section-title">About Me</h2>
+            <div class="about-content">
+                <div class="about-text">
+                    <p>
+                        I'm an undergraduate at <strong>The City College of New York</strong> pursuing a dual degree in Biology and Business Management, living at the intersection of science and strategy with a growing interest in sales and the medical field.
+                    </p>
+                    <p>
+                        I'm at my best in fast-paced environments where the pace is high, the stakes are real, and teamwork decides the outcome. Whether I'm collaborating with a team or stepping up when things get hectic, I'm known for staying steady, communicating clearly, and pulling my weight.
+                    </p>
+                    <p>
+                        I care a lot about doing work that matters, and I'm driven by roles where dedication and people-first effort can genuinely change someone's experience. When I'm not working or studying, I love meeting new people, journaling, and creating films and short skits. 🎬
+                    </p>
+                </div>
+                <div class="about-stats">
+                    <div class="stat-card">
+                        <div class="stat-number">3+</div>
+                        <div class="stat-label">Years Healthcare Experience</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">150+</div>
+                        <div class="stat-label">Hours as Discovery Guide</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">Dual</div>
+                        <div class="stat-label">Degree Student</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">3</div>
+                        <div class="stat-label">Certifications</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Featured Roles Section -->
+        <section id="projects">
+            <h2 class="section-title">Featured Roles</h2>
+            <div class="projects-grid">
+                <div class="project-card">
+                    <h3 class="project-title">E.D Medical Intern</h3>
+                    <p class="project-description">
+                        Currently working at The Mount Sinai Hospital in the Emergency Department, gaining hands-on experience in a fast-paced medical environment. Assisting healthcare professionals and learning critical skills in patient care and medical operations.
+                    </p>
+                    <div class="project-tags">
+                        <span class="tag">Healthcare</span>
+                        <span class="tag">Patient Care</span>
+                        <span class="tag">Emergency Medicine</span>
+                        <span class="tag">Current</span>
+                    </div>
+                </div>
+
+                <div class="project-card">
+                    <h3 class="project-title">Himalayan Student Association</h3>
+                    <p class="project-description">
+                        Founded and currently serving as President of the Himalayan Student Association at CCNY, building a community and creating opportunities for cultural exchange, leadership development, and student engagement.
+                    </p>
+                    <div class="project-tags">
+                        <span class="tag">Leadership</span>
+                        <span class="tag">Founder</span>
+                        <span class="tag">Community</span>
+                        <span class="tag">CCNY</span>
+                    </div>
+                </div>
+
+                <div class="project-card">
+                    <h3 class="project-title">Sales & Customer Service</h3>
+                    <p class="project-description">
+                        Extensive experience in retail and service industries including Levi's (Seasonal Sales), Naruto Ramen (Server), and Sheer Bliss Nail Salon (Sales Manager), developing strong communication and customer relationship skills.
+                    </p>
+                    <div class="project-tags">
+                        <span class="tag">Sales</span>
+                        <span class="tag">Customer Service</span>
+                        <span class="tag">Management</span>
+                        <span class="tag">Operations</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Experience Section -->
+        <section id="experience">
+            <h2 class="section-title">Experience</h2>
+            <div class="timeline">
+                <div class="timeline-item">
+                    <div class="timeline-date">Dec 2025 - Present</div>
+                    <h3 class="timeline-title">E.D Medical Intern</h3>
+                    <div class="timeline-company">The Mount Sinai Hospital · Part-time</div>
+                    <p class="timeline-description">
+                        Working in the Emergency Department at Mount Sinai, New York. Gaining hands-on experience in a fast-paced healthcare setting, assisting medical professionals with patient care, and developing clinical skills in emergency medicine.
+                    </p>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-date">Nov 2025 - Present</div>
+                    <h3 class="timeline-title">Seasonal Sales Associate</h3>
+                    <div class="timeline-company">Levi Strauss & Co. · Seasonal</div>
+                    <p class="timeline-description">
+                        Supporting customers in a high-volume retail environment during Black Friday and holiday rush. Advising on fit, style, and products while processing transactions efficiently. Collaborating with teammates to hit daily sales goals and maintain Levi's brand standards.
+                    </p>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-date">Aug 2025 - Present</div>
+                    <h3 class="timeline-title">Founder & President</h3>
+                    <div class="timeline-company">Himalayan Student Association</div>
+                    <p class="timeline-description">
+                        Founded and leading the Himalayan Student Association at The City College of New York. Building community, organizing events, and creating opportunities for cultural exchange and leadership development among students.
+                    </p>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-date">Jul 2024 - Aug 2024</div>
+                    <h3 class="timeline-title">Nurse Intern</h3>
+                    <div class="timeline-company">Ditmas Park Nursing & Rehab · Internship</div>
+                    <p class="timeline-description">
+                        Assisted Physical Therapists and Registered Nurses in providing patient care and rehabilitation support. Gained hands-on experience monitoring patients, assisting with mobility exercises, and ensuring a safe environment. Developed strong communication and teamwork skills in a clinical setting.
+                    </p>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-date">Apr 2024 - Jul 2025</div>
+                    <h3 class="timeline-title">Server</h3>
+                    <div class="timeline-company">Naruto Ramen · Part-time</div>
+                    <p class="timeline-description">
+                        Gained experience in a fast-paced, customer-focused environment. Took orders, handled cash transactions, and provided excellent customer service during high-volume hours. Strengthened teamwork and problem-solving abilities while collaborating with kitchen staff and fellow servers.
+                    </p>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-date">Feb 2024 - Jun 2024</div>
+                    <h3 class="timeline-title">Discovery Guide</h3>
+                    <div class="timeline-company">Wildlife Conservation Society · Seasonal</div>
+                    <p class="timeline-description">
+                        Completed 150+ hours as a Discovery Guide, conducting interactive workshops and educational games. Communicated effectively with children and adults, adapting style to different audiences. Collaborated with other students to create engaging learning experiences about wildlife conservation.
+                    </p>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-date">Jun 2022 - Jan 2024</div>
+                    <h3 class="timeline-title">Sales Manager</h3>
+                    <div class="timeline-company">Sheer Bliss Nail Salon · Part-time</div>
+                    <p class="timeline-description">
+                        Developed strong communication, problem-solving, and organizational skills in a family-owned business. Managed appointments, coordinated with staff, handled transactions, and resolved scheduling conflicts. Ensured smooth operations and a welcoming environment that encouraged repeat visits.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Skills Section -->
+        <section id="skills">
+            <h2 class="section-title">Skills & Expertise</h2>
+            <div class="skills-grid">
+                <div class="skill-category">
+                    <h3>Healthcare & Medical</h3>
+                    <ul class="skill-list">
+                        <li>Patient Care</li>
+                        <li>Emergency Medicine</li>
+                        <li>Healthcare Operations</li>
+                        <li>Medical Communication</li>
+                        <li>Clinical Support</li>
+                        <li>Rehabilitation Support</li>
+                    </ul>
+                </div>
+
+                <div class="skill-category">
+                    <h3>Sales & Customer Service</h3>
+                    <ul class="skill-list">
+                        <li>Sales Management</li>
+                        <li>Customer Satisfaction</li>
+                        <li>Retail Operations</li>
+                        <li>Product Knowledge</li>
+                        <li>Transaction Processing</li>
+                        <li>Inbound Sales</li>
+                    </ul>
+                </div>
+
+                <div class="skill-category">
+                    <h3>Business & Management</h3>
+                    <ul class="skill-list">
+                        <li>Operations Management</li>
+                        <li>Team Leadership</li>
+                        <li>Problem Solving</li>
+                        <li>Critical Thinking</li>
+                        <li>Time Management</li>
+                        <li>Organization Skills</li>
+                    </ul>
+                </div>
+
+                <div class="skill-category">
+                    <h3>Soft Skills</h3>
+                    <ul class="skill-list">
+                        <li>Communication</li>
+                        <li>Teamwork</li>
+                        <li>Teaching</li>
+                        <li>Adaptability</li>
+                        <li>Multitasking</li>
+                        <li>Customer Support</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Contact Section -->
+        <section id="contact">
+            <h2 class="section-title">Let's Connect</h2>
+            <div class="contact-content">
+                <p class="contact-text">
+                    I'm always interested in connecting with healthcare professionals, potential collaborators, or anyone passionate about medical sales and patient care. Whether you want to discuss opportunities, explore collaborations, or just chat about healthcare innovation, feel free to reach out!
+                </p>
+                <div class="contact-links">
+                    <a href="https://www.linkedin.com/in/stenzinn01/" class="contact-link" target="_blank">LinkedIn</a>
+                    <a href="mailto:sonam@example.com" class="contact-link">Email Me</a>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2025 Sonam Tenzin · Built with passion for healthcare and helping people</p>
+    </footer>
+
+    <script>
+        // 3D Particle Background with flowing effect (dark particles on light bg)
+        const canvas = document.getElementById('particle-canvas');
+        const ctx = canvas.getContext('2d');
+        
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        let particles = [];
+        let mouseX = 0;
+        let mouseY = 0;
+        let time = 0;
+
+        class Particle {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.z = Math.random() * 1500;
+                this.baseX = this.x;
+                this.baseY = this.y;
+                this.vx = (Math.random() - 0.5) * 0.3;
+                this.vy = (Math.random() - 0.5) * 0.3;
+                this.vz = (Math.random() - 0.5) * 2;
+                // Light theme: dark particles on light background
+                this.color = Math.random() > 0.5 ? 'rgba(102, 126, 234, 0.7)' : 'rgba(124, 58, 237, 0.7)';
+                this.waveOffsetX = Math.random() * Math.PI * 2;
+                this.waveOffsetY = Math.random() * Math.PI * 2;
+            }
+
+            update() {
+                // Wave motion effect
+                const waveX = Math.sin(time * 0.5 + this.waveOffsetX + this.baseY * 0.002) * 30;
+                const waveY = Math.cos(time * 0.3 + this.waveOffsetY + this.baseX * 0.002) * 20;
+                
+                this.baseX += this.vx;
+                this.baseY += this.vy;
+                this.z += this.vz;
+                
+                this.x = this.baseX + waveX;
+                this.y = this.baseY + waveY;
+
+                // Mouse interaction
+                const dx = mouseX - this.x;
+                const dy = mouseY - this.y;
+                const distance = Math.sqrt(dx * dx + dy * dy);
+                
+                if (distance < 250) {
+                    const force = (250 - distance) / 250;
+                    this.baseX -= dx * force * 0.05;
+                    this.baseY -= dy * force * 0.05;
+                }
+
+                // Boundary checking
+                if (this.baseX < -100) this.baseX = canvas.width + 100;
+                if (this.baseX > canvas.width + 100) this.baseX = -100;
+                if (this.baseY < -100) this.baseY = canvas.height + 100;
+                if (this.baseY > canvas.height + 100) this.baseY = -100;
+                if (this.z < 0 || this.z > 1500) this.vz *= -1;
+            }
+
+            draw() {
+                const scale = 1000 / (1000 + this.z);
+                const x2d = (this.x - canvas.width / 2) * scale + canvas.width / 2;
+                const y2d = (this.y - canvas.height / 2) * scale + canvas.height / 2;
+                const size = 4 * scale;
+
+                ctx.beginPath();
+                ctx.arc(x2d, y2d, size, 0, Math.PI * 2);
+                ctx.fillStyle = this.color;
+                ctx.fill();
+
+                // Add glow effect
+                ctx.shadowBlur = 15;
+                ctx.shadowColor = this.color;
+                ctx.fill();
+                ctx.shadowBlur = 0;
+
+                // Draw connections
+                particles.forEach(particle => {
+                    const dx = this.x - particle.x;
+                    const dy = this.y - particle.y;
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+
+                    if (distance < 150) {
+                        const particleScale = 1000 / (1000 + particle.z);
+                        const x2d2 = (particle.x - canvas.width / 2) * particleScale + canvas.width / 2;
+                        const y2d2 = (particle.y - canvas.height / 2) * particleScale + canvas.height / 2;
+                        
+                        ctx.beginPath();
+                        ctx.moveTo(x2d, y2d);
+                        ctx.lineTo(x2d2, y2d2);
+                        ctx.strokeStyle = `rgba(102, 126, 234, ${0.2 * (1 - distance / 150)})`;
+                        ctx.lineWidth = 1.5;
+                        ctx.stroke();
+                    }
+                });
+            }
+        }
+
+        // Initialize particles
+        for (let i = 0; i < 150; i++) {
+            particles.push(new Particle());
+        }
+
+        // Animation loop
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            time += 0.01;
+            
+            particles.forEach(particle => {
+                particle.update();
+                particle.draw();
+            });
+
+            requestAnimationFrame(animate);
+        }
+
+        animate();
+
+        // Mouse tracking
+        document.addEventListener('mousemove', (e) => {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+        });
+
+        // Resize handling
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
+
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Intersection Observer for fade-in animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -100px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        // Observe all sections and cards
+        document.querySelectorAll('section, .project-card, .timeline-item, .skill-category, .stat-card').forEach(el => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(30px)';
+            el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+            observer.observe(el);
+        });
+
+        // Parallax effect for grid background
+        window.addEventListener('scroll', () => {
+            const scrolled = window.pageYOffset;
+            const grid = document.querySelector('.grid-bg');
+            if (grid) {
+                grid.style.transform = `translateY(${scrolled * 0.3}px)`;
+            }
+        });
+    </script>
+</body>
+</html>
